@@ -1,9 +1,9 @@
 {
   "runtime": "NetCore31",
-  "defaultVariables": "OutDir=",
+  "defaultVariables": "OutDir=,ClientNamespace=,SwaggerPath=",
   "documentGenerator": {
     "fromDocument": {
-      "url": "swagger.json"
+      "url": "$(SwaggerPath)"
     }
   },
   "codeGenerators": {
@@ -11,7 +11,7 @@
       "clientBaseClass": null,
       "configurationClass": null,
       "generateClientClasses": true,
-      "generateClientInterfaces": false,
+      "generateClientInterfaces": true,
       "clientBaseInterface": null,
       "injectHttpClient": true,
       "disposeHttpClient": true,
@@ -22,11 +22,11 @@
       "useHttpClientCreationMethod": false,
       "httpClientType": "System.Net.Http.HttpClient",
       "useHttpRequestMessageCreationMethod": false,
-      "useBaseUrl": true,
-      "generateBaseUrlProperty": true,
+      "useBaseUrl": false,
+      "generateBaseUrlProperty": false,
       "generateSyncMethods": false,
       "exposeJsonSerializerSettings": false,
-      "clientClassAccessModifier": "public",
+      "clientClassAccessModifier": "internal",
       "typeAccessModifier": "public",
       "generateContractsOutput": false,
       "contractsNamespace": null,
@@ -37,8 +37,8 @@
       "useRequestAndResponseSerializationSettings": false,
       "serializeTypeInformation": false,
       "queryNullValue": "",
-      "className": "{controller}Client",
-      "operationGenerationMode": "MultipleClientsFromOperationId",
+      "className": "ApiClient",
+      "operationGenerationMode": "SingleClientFromOperationId",
       "additionalNamespaceUsages": [ "System.Collections.Generic", "App.ApiDtos" ],
       "additionalContractNamespaceUsages": [],
       "generateOptionalParameters": false,
@@ -52,7 +52,7 @@
       "wrapResponseMethods": [],
       "generateResponseClasses": true,
       "responseClass": "SwaggerResponse",
-      "namespace": "ApiClient",
+      "namespace": "$(ClientNamespace)",
       "requiredPropertiesMustBeDefined": true,
       "dateType": "System.DateTimeOffset",
       "jsonConverters": null,
@@ -69,10 +69,7 @@
       "classStyle": "Poco",
       "generateDefaultValues": true,
       "generateDataAnnotations": true,
-      "excludedTypeNames": [
-        "WeatherForecast",
-        "ApiResponseOfIEnumerableOfWeatherForecast"
-      ],
+      "excludedTypeNames": [],
       "excludedParameterNames": [],
       "handleReferences": false,
       "generateImmutableArrayProperties": false,
@@ -82,7 +79,7 @@
       "inlineNamedDictionaries": false,
       "inlineNamedTuples": true,
       "inlineNamedAny": false,
-      "generateDtoTypes": true,
+      "generateDtoTypes": false,
       "generateOptionalPropertiesAsNullable": false,
       "templateDirectory": null,
       "typeNameGeneratorType": null,

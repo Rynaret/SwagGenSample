@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -10,6 +10,30 @@
 
   <ItemGroup>
     <ProjectReference Include="..\App.ApiDtos\App.ApiDtos.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="AppApiClient.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>AppApiClient.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="V1\" />
+    <Folder Include="V2\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="AppApiClient.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>AppApiClient.tt</DependentUpon>
+    </Compile>
   </ItemGroup>
 
 </Project>

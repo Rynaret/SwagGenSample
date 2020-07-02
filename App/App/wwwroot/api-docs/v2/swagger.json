@@ -10,33 +10,10 @@
       "url": "some medium",
       "email": ""
     },
-    "version": "v1"
+    "version": "v2"
   },
   "paths": {
-    "/v1/weather-forecast": {
-      "get": {
-        "tags": [
-          "WeatherForecast"
-        ],
-        "operationId": "WeatherForecast_Get",
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/WeatherForecast"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/v1/weather-forecast/say-hello": {
+    "/v2/weather-forecast/say-hello": {
       "get": {
         "tags": [
           "WeatherForecast"
@@ -55,11 +32,54 @@
           }
         }
       }
+    },
+    "/v2/weather-forecast": {
+      "get": {
+        "tags": [
+          "WeatherForecast"
+        ],
+        "operationId": "WeatherForecast_Get",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/WeatherForecastV2"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v2/weather-forecast/generic-response": {
+      "get": {
+        "tags": [
+          "WeatherForecast"
+        ],
+        "operationId": "WeatherForecast_GenericResponse",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse<IEnumerable<WeatherForecastV2>>"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
     "schemas": {
-      "WeatherForecast": {
+      "WeatherForecastV2": {
         "type": "object",
         "additionalProperties": false,
         "properties": {
@@ -78,6 +98,33 @@
           "summary": {
             "type": "string",
             "nullable": true
+          },
+          "city": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "ApiResponse<IEnumerable<WeatherForecastV2>>": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "modelState": {
+            "type": "object",
+            "nullable": true,
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "payload": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/WeatherForecastV2"
+            }
           }
         }
       }

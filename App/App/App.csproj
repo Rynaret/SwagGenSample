@@ -10,6 +10,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="4.1.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer" Version="4.1.1" />
     <PackageReference Include="MSBuildTasks" Version="1.5.0.235">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -25,21 +27,26 @@
     <ProjectReference Include="..\App.ApiDtos\App.ApiDtos.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ApiDocs Include="wwwroot\api-docs\v1\swagger.json" DocName="v1" CsharpClientOutDir="ApiClient\V1\ApiClient.cs" ClientNamespace="ApiClient.V1" />
+    <ApiDocs Include="wwwroot\api-docs\v2\swagger.json" DocName="v2" CsharpClientOutDir="ApiClient\V2\ApiClient.cs" ClientNamespace="ApiClient.V2" />
+  </ItemGroup>
+
   <PropertyGroup>
-    <ApiDocsFolder>wwwroot/api-docs/v1</ApiDocsFolder>
+    <NSwagConfigFilePath>wwwroot\api-docs\nswag.json</NSwagConfigFilePath>
   </PropertyGroup>
 
   <Target Name="SwaggerToFile" AfterTargets="Build">
-    <Exec EnvironmentVariables="ASPNETCORE_ENVIRONMENT=Development" Command="$(NSwagExe_Core31) aspnetcore2openapi /assembly:$(TargetDir)App.dll /output:$(ApiDocsFolder)/swagger.json" />
+    <Exec EnvironmentVariables="ASPNETCORE_ENVIRONMENT=Development" Command="$(NSwagExe_Core31) aspnetcore2openapi /assembly:$(TargetDir)$(MSBuildProjectName).dll /documentName:%(ApiDocs.DocName) /output:%(ApiDocs.Identity)" />
   </Target>
 
   <Target Name="CsharpClientGeneration" AfterTargets="SwaggerToFile">
-    <Exec Command="$(NSwagExe_Core31) run $(ApiDocsFolder)/nswag.json /variables:OutDir=$(SolutionDir)ApiClient/AppApiClient.cs" />
+    <Exec Command="$(NSwagExe_Core31) run $(NSwagConfigFilePath) /variables:OutDir=$(SolutionDir)%(ApiDocs.CsharpClientOutDir),ClientNamespace=%(ApiDocs.ClientNamespace),SwaggerPath=$(MSBuildProjectDirectory)\%(ApiDocs.Identity)" />
   </Target>
 
   <Target Name="MakeItGenericAgain" AfterTargets="CsharpClientGeneration">
-    <Exec Command='dotnet orang replace $(SolutionDir)ApiClient\AppApiClient.cs -c "([A-Z\n]+[a-zA-Z\n]+)Of([A-Z\n]+[a-zA-Z\n]+)Of([A-Z\n]+[a-zA-Z\n]+)" -r "$1&lt;$2&lt;$3&gt;&gt;" -v m' />
-    <Exec Command='dotnet orang replace $(SolutionDir)ApiClient\AppApiClient.cs -c "(?&lt;!\r)\n" -r "\r\n" ce -v m' />
+    <Exec Command="dotnet orang replace $(SolutionDir)%(ApiDocs.CsharpClientOutDir) -c &quot;([A-Z\d]+[a-zA-Z\d]+)Of([A-Z\d]+[a-zA-Z\d]+)Of([A-Z\d]+[a-zA-Z\d]+)&quot; -r &quot;$1&lt;$2&lt;$3&gt;&gt;&quot; -v m" IgnoreExitCode="true" />
+    <Exec Command="dotnet orang replace $(SolutionDir)%(ApiDocs.CsharpClientOutDir) -c &quot;(?&lt;!\r)\n&quot; -r &quot;\r\n&quot; ce -v m" />
   </Target>
 
 </Project>

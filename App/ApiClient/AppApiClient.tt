@@ -1,0 +1,47 @@
+﻿<#@ template language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ assembly name="System.Xml" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Xml" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.IO" #>
+using System.Net.Http;
+
+namespace ApiClient
+{
+    public class AppApiClient
+    {
+<#
+var doc = new System.Xml.XmlDocument();
+doc.Load("C:\\Users\\Renat\\source\\repos\\SwagGenSample\\App\\App\\App.csproj");
+var clientNamespaces = doc.DocumentElement.SelectNodes("//@ClientNamespace")
+    .OfType<System.Xml.XmlAttribute>()
+    .Select(x => x.Value)
+    .ToList();
+#>
+<#
+var index = 0;
+foreach (var clientNamespace in clientNamespaces)
+{
+index++;
+#>
+        public <#= clientNamespace #>.IApiClient V<#= index #> { get; }
+<#
+}
+#>
+
+        public AppApiClient(HttpClient httpClient)
+        {
+<#
+index = 0;
+foreach (var clientNamespace in clientNamespaces)
+{
+index++;
+#>
+            V<#= index #> = new <#= clientNamespace #>.ApiClient(httpClient);
+<#
+}
+#>
+        }
+    }
+}
