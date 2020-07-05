@@ -1,10 +1,11 @@
-﻿<#@ template language="C#" #>
+﻿<#@ template language="C#" hostspecific="True" #>
 <#@ assembly name="System.Core" #>
 <#@ assembly name="System.Xml" #>
 <#@ import namespace="System.Linq" #>
 <#@ import namespace="System.Xml" #>
 <#@ import namespace="System.Collections.Generic" #>
 <#@ import namespace="System.IO" #>
+<#@ import namespace="System.Text.RegularExpressions" #>
 using System.Net.Http;
 
 namespace ApiClient
@@ -13,19 +14,18 @@ namespace ApiClient
     {
 <#
 var doc = new System.Xml.XmlDocument();
-doc.Load("C:\\Users\\Renat\\source\\repos\\SwagGenSample\\App\\App\\App.csproj");
-var clientNamespaces = doc.DocumentElement.SelectNodes("//@ClientNamespace")
+doc.Load(Host.ResolvePath("..\\App\\App.csproj"));
+var versionRegex = new Regex(@".(V\d)");
+var clients = doc.DocumentElement.SelectNodes("//@ClientNamespace")
     .OfType<System.Xml.XmlAttribute>()
-    .Select(x => x.Value)
+    .Select(x => new { Namespace = x.Value, Version = versionRegex.Match(x.Value).Groups[1] })
     .ToList();
 #>
 <#
-var index = 0;
-foreach (var clientNamespace in clientNamespaces)
+foreach (var client in clients)
 {
-index++;
 #>
-        public <#= clientNamespace #>.IApiClient V<#= index #> { get; }
+        public <#= client.Namespace #>.IApiClient <#= client.Version #> { get; }
 <#
 }
 #>
@@ -33,12 +33,10 @@ index++;
         public AppApiClient(HttpClient httpClient)
         {
 <#
-index = 0;
-foreach (var clientNamespace in clientNamespaces)
+foreach (var client in clients)
 {
-index++;
 #>
-            V<#= index #> = new <#= clientNamespace #>.ApiClient(httpClient);
+            <#= client.Version #> = new <#= client.Namespace #>.ApiClient(httpClient);
 <#
 }
 #>
