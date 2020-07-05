@@ -1,0 +1,44 @@
+﻿<#@ template language="C#" hostspecific="True" #>
+<#@ assembly name="Newtonsoft.Json" #>
+<#@ assembly name="System.Core" #>
+<#@ assembly name="System.Xml" #>
+<#@ import namespace="Newtonsoft.Json" #>
+<#@ import namespace="Newtonsoft.Json.Linq" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Xml" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.IO" #>
+using System.Net.Http;
+
+namespace ApiClient
+{
+    public class AppApiClient
+    {
+<#
+var swaggerJson = File.ReadAllText(Host.ResolvePath("..\\App\\wwwroot\\api-docs\\swagger.json"));
+var swaggerJsonObject = JObject.Parse(swaggerJson);
+
+var versions = swaggerJsonObject["tags"].Select(x => ((string)x["name"]).ToUpper()).ToList();
+#>
+<#
+foreach (var version in versions)
+{
+#>
+        public I<#= version #>Client <#= version #> { get; }
+<#
+}
+#>
+
+        public AppApiClient(HttpClient httpClient)
+        {
+<#
+foreach (var version in versions)
+{
+#>
+            <#= version #> = new <#= version #>Client(httpClient);
+<#
+}
+#>
+        }
+    }
+}

@@ -4,11 +4,10 @@ using System.Linq;
 using App.ApiDtos;
 using Microsoft.AspNetCore.Mvc;
 
-namespace App.Controllers
+namespace App.Controllers.V2
 {
     [ApiController]
     [ApiVersion("2.0")]
-    [ApiVersion("1.0")]
     [Route("v{version:apiVersion}/weather-forecast")]
     public class WeatherForecastController : ControllerBase
     {
@@ -18,11 +17,10 @@ namespace App.Controllers
         };
 
         [HttpGet]
-        [MapToApiVersion("1.0")]
-        public IEnumerable<WeatherForecast> Get()
+        public IEnumerable<WeatherForecastV2> Get()
         {
             var rng = new Random();
-            return Enumerable.Range(1, 5).Select(index => new WeatherForecast
+            return Enumerable.Range(1, 5).Select(index => new WeatherForecastV2
             {
                 Date = DateTime.Now.AddDays(index),
                 TemperatureC = rng.Next(-20, 55),
@@ -31,10 +29,17 @@ namespace App.Controllers
             .ToArray();
         }
 
-        [HttpGet("say-hello")]
-        public string SayHello()
+        [HttpGet("generic-response")]
+        public ApiResponse<IEnumerable<WeatherForecastV2>> GenericResponse()
         {
-            return "Hello";
+            var rng = new Random();
+            return Enumerable.Range(1, 5).Select(index => new WeatherForecastV2
+            {
+                Date = DateTime.Now.AddDays(index),
+                TemperatureC = rng.Next(-20, 55),
+                Summary = Summaries[rng.Next(Summaries.Length)]
+            })
+            .ToArray();
         }
     }
 }
