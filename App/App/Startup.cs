@@ -39,7 +39,7 @@ namespace App
                 });
 
             // Add OpenAPI/Swagger documents
-            services.AddSingleton<AllVersionsOperationProcessor>();
+            services.AddSingleton<VersionTaggingOperationProcessor>();
             services
                 .AddOpenApiDocument(configure =>
                 {
@@ -52,7 +52,7 @@ namespace App
                 .AddOpenApiDocument((configure, serviceProvider) =>
                 {
                     BaseConfigure(configure, "vall", new[] { "v1", "v2" });
-                    configure.OperationProcessors.Add(serviceProvider.GetService<AllVersionsOperationProcessor>());
+                    configure.OperationProcessors.Add(serviceProvider.GetService<VersionTaggingOperationProcessor>());
                 });
         }
 

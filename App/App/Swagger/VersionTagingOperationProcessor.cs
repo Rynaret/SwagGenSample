@@ -4,7 +4,7 @@ using NSwag.Generation.Processors.Contexts;
 
 namespace App.Swagger
 {
-    public class AllVersionsOperationProcessor : IOperationProcessor
+    public class VersionTaggingOperationProcessor : IOperationProcessor
     {
         public bool Process(OperationProcessorContext context)
         {
