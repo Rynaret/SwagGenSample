@@ -10,12 +10,22 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="wwwroot\index.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\index.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.6" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="3.1.6" />
     <PackageReference Include="MSBuildTasks" Version="1.5.0.235">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="NSwag.AspNetCore" Version="13.6.0" />
-    <PackageReference Include="NSwag.MSBuild" Version="13.6.0">
+    <PackageReference Include="NSwag.AspNetCore" Version="13.7.0" />
+    <PackageReference Include="NSwag.MSBuild" Version="13.7.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
@@ -27,7 +37,19 @@
 
   <PropertyGroup>
     <ApiDocsFolder>wwwroot/api-docs/v1</ApiDocsFolder>
+    <SwagOidcFolder>swagger-oidc</SwagOidcFolder>
   </PropertyGroup>
+
+  <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition="'$(Configuration)' == 'Debug'">
+    <!-- Ensure Node.js is installed -->
+    <Exec Command="node --version" ContinueOnError="true">
+      <Output TaskParameter="ExitCode" PropertyName="ErrorCode" />
+    </Exec>
+    <Error Condition="'$(ErrorCode)' != '0'" Text="Node.js is required to build and run this project. To continue, please install Node.js from https://nodejs.org/, and then restart your command prompt or IDE." />
+    <Message Importance="high" Text="Restoring dependencies using 'npm' and building swagger-oidc. This may take several minutes..." />
+    <Exec WorkingDirectory="$(SwagOidcFolder)" Command="npm install" Condition="!Exists('$(SwagOidcFolder)/node_modules') " />
+    <Exec WorkingDirectory="$(SwagOidcFolder)" Command="npm run build" />
+  </Target>
 
   <Target Name="SwaggerToFile" AfterTargets="Build">
     <Exec EnvironmentVariables="ASPNETCORE_ENVIRONMENT=Development" Command="$(NSwagExe_Core31) aspnetcore2openapi /assembly:$(TargetDir)App.dll /output:$(ApiDocsFolder)/swagger.json" />
@@ -38,8 +60,7 @@
   </Target>
 
   <Target Name="MakeItGenericAgain" AfterTargets="CsharpClientGeneration">
-    <Exec Command='dotnet orang replace $(SolutionDir)ApiClient\AppApiClient.cs -c "([A-Z\n]+[a-zA-Z\n]+)Of([A-Z\n]+[a-zA-Z\n]+)Of([A-Z\n]+[a-zA-Z\n]+)" -r "$1&lt;$2&lt;$3&gt;&gt;" -v m' />
-    <Exec Command='dotnet orang replace $(SolutionDir)ApiClient\AppApiClient.cs -c "(?&lt;!\r)\n" -r "\r\n" ce -v m' />
+    <Exec Command="dotnet orang replace $(SolutionDir)ApiClient\AppApiClient.cs -c &quot;([A-Z\n]+[a-zA-Z\n]+)Of([A-Z\n]+[a-zA-Z\n]+)Of([A-Z\n]+[a-zA-Z\n]+)&quot; -r &quot;$1&lt;$2&lt;$3&gt;&gt;&quot; -v m" />
   </Target>
 
 </Project>

@@ -6,3 +6,5 @@
 bin
 obj
 *.csproj.user
+/App/App/swagger-oidc/.cache
+/App/App/swagger-oidc/node_modules

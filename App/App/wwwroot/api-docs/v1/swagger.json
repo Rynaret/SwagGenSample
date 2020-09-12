@@ -1,5 +1,5 @@
 {
-  "x-generator": "NSwag v13.6.0.0 (NJsonSchema v10.1.18.0 (Newtonsoft.Json v12.0.0.0))",
+  "x-generator": "NSwag v13.7.0.0 (NJsonSchema v10.1.24.0 (Newtonsoft.Json v12.0.0.0))",
   "openapi": "3.0.0",
   "info": {
     "title": "App API",
@@ -7,7 +7,7 @@
     "termsOfService": "None",
     "contact": {
       "name": "Renat Sungatullin",
-      "url": "some medium",
+      "url": "https://medium.com/dev-genius/csharp-protecting-swagger-endpoints-82ae5cfc7eb1",
       "email": ""
     },
     "version": "v1"
@@ -104,6 +104,25 @@
           }
         }
       }
+    },
+    "securitySchemes": {
+      "bearer": {
+        "type": "oauth2",
+        "flows": {
+          "authorizationCode": {
+            "authorizationUrl": "https://demo.identityserver.io/connect/authorize",
+            "tokenUrl": "https://demo.identityserver.io/connect/token",
+            "scopes": {
+              "api": ""
+            }
+          }
+        }
+      }
     }
-  }
+  },
+  "security": [
+    {
+      "bearer": []
+    }
+  ]
 }
